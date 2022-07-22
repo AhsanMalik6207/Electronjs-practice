@@ -11,8 +11,18 @@
     We are using Node.js <span id="node-version"></span>,
     Chromium <span id="chrome-version"></span>,
     and Electron <span id="electron-version"></span>.
-    <h1 id="cpu-name"></h1>
-    <h3 id="cores"></h3>
+    Title: <input id="title"/>
+    <button id="btn" type="button">Set</button>
+
+    <!-- two way -->
+    <div>
+      <button type="button" id="btn1">Open a File</button>
+      File path: <strong id="filePath"></strong>
+    </div>
+    <!-- main to renderer -->
+    <div>
+      Current value: <strong id="counter">0</strong>
+    </div>
     <script src="./renderer.js"></script>
   </body>
 </html>
