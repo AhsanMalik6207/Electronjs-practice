@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Tray, nativeImage} = require('electron')
+const {app, BrowserWindow, Tray, ipcMain, nativeTheme,nativeImage} = require('electron')
 const path = require('path')
 
 let tray, window
@@ -9,10 +9,10 @@ let tray, window
 
 function createWindow () {
   // Create the browser window.
-  const window = new BrowserWindow({
+   window = new BrowserWindow({
     width: 420,
     height: 560,
-    show:false,
+    show:true,
     skipTaskbar: true,
     frame:false,
     fullscreenable:false,
@@ -25,8 +25,23 @@ function createWindow () {
 
   window.on('closed', ()=> window = null)
   // and load the index.html of the app.
-  window.loadURL('http://localhost:3000 ')
+  // window.loadURL('http://localhost:3000 ')
+  window.loadFile('./public/index.html')
 
+// DARK Mode test
+ipcMain.handle('dark-mode:toggle', () => {
+  console.log("hello")
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'light'
+  } else {
+    nativeTheme.themeSource = 'dark'
+  }
+  return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle('dark-mode:system', () => {
+  nativeTheme.themeSource = 'system'
+})
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
@@ -37,15 +52,15 @@ const createTray = ()=> {
   tray = new Tray(nImage);
   tray.on('click', (event)=> toggleWindow());
 }
-const toggleWindow =()=>{
-  window.isVisible() ? window.hide() : showWindow();
-}
-
 const showWindow = () =>{
   const position = windowPosition();
   window.setPosition(position.x, position.y)
   window.show()
 }
+const toggleWindow =()=>{
+  window.isVisible()?window.hide():showWindow() 
+}
+
 const windowPosition = ()=> {
  const windowBounds = window.getBounds()
  const trayBounds = tray.getBounds()
@@ -65,7 +80,8 @@ app.whenReady().then(() => {
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {createWindow()}
+
   })
 })
 
@@ -73,7 +89,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') {app.quit()}
 })
 
 // In this file you can include the rest of your app's specific main process
